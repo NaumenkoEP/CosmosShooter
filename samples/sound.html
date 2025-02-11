@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Game with Sound Effects</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <audio id="shoot-sound" src="cosmos/sounds/laserShot.wav"></audio>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const context = canvas.getContext('2d');
+
+        // Sound elements
+        const shootSound = document.getElementById('shoot-sound');
+        const fireSound = document.getElementById('fire-sound');
+
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            width: 50,
+            height: 50,
+            color: 'blue',
+            draw(){
+                context.fillStyle = this.color;
+                context.fillRect(this.x, this.y, this.width, this.height);
+            }
+        };
+
+        const projectiles = [];
+
+        window.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                shootProjectile();
+            }
+        });
+
+        function shootProjectile() {
+            const projectile = {
+                x: player.x + player.width / 2,
+                y: player.y,
+                radius: 5,
+                color: 'red',
+                speed: 5,
+                draw() {
+                    context.beginPath();
+                    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    context.fillStyle = this.color;
+                    context.fill();
+                    context.closePath();
+                },
+                update() {
+                    this.y -= this.speed;
+                    this.draw();
+                }
+            };
+
+            projectiles.push(projectile);
+
+            // Play shoot sound
+            shootSound.currentTime = 0;
+            shootSound.play();
+        }
+
+        // Animation loop
+        function animate() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            player.draw();
+
+            projectiles.forEach((projectile, index) => {
+                projectile.update();
+                if (projectile.y + projectile.radius < 0) {
+                    projectiles.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

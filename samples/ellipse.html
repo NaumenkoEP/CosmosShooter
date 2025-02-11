@@ -1,0 +1,18 @@
+<body>
+    <canvas class="canvas"></canvas>
+    <script>
+        const canvas = document.querySelector('.canvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        context.beginPath();
+        // context.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, counterclockwise);
+        context.ellipse(200, 150, 50, 100, Math.PI / 2, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'blue';
+        context.stroke();
+        context.closePath();
+
+    </script>
+</body>

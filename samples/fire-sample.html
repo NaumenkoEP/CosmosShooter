@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Fire</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+    }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const fireColors = ['#00FFFF', '#00BFFF', '#4169E1', '#0000FF'];
+    
+    class Particle {
+        constructor(x, y, radius, color, velocity) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.color = color;
+            this.velocity = velocity;
+        }
+    
+        draw() {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.shadowColor = this.color;
+            ctx.shadowBlur = 20;
+            ctx.fill();
+            ctx.closePath();
+            ctx.restore();
+        }
+    
+        update() {
+            this.draw();
+            this.x += this.velocity.x;
+            this.y += this.velocity.y;
+            this.radius -= 0.2;
+        }
+    }
+    
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+        particles.forEach((particle, index) => {
+            if (particle.radius <= 0) {
+                particles.splice(index, 1);
+            } else {
+                particle.update();
+            }
+        });
+    
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = {
+            x: Math.cos(angle) * (Math.random() * 6),
+            y: Math.sin(angle) * (Math.random() * 6)
+        };
+        const color = fireColors[Math.floor(Math.random() * fireColors.length)];
+        particles.push(new Particle(canvas.width / 2, canvas.height - 10, 30, color, velocity));
+    }
+    
+    const particles = [];
+    animate();
+    
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles.length = 0;
+        animate();
+    });
+</script>
+</body>
+</html>
